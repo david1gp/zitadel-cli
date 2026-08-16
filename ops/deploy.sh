@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Running the local @adaptive-ds/zitadel-cli deployment preflight."
+bun run format:check
+bun run type-check
+bun run test
+bun run build
+echo "Build and tests complete. Publish via: bun run release"

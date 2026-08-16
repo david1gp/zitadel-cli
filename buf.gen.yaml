@@ -1,0 +1,37 @@
+version: v2
+clean: true
+inputs:
+  - tarball: https://github.com/zitadel/zitadel/archive/a9311b8c702531832575351a663e98a2242778e5.tar.gz
+    compression: gzip
+    strip_components: 1
+    subdir: proto
+plugins:
+  - local: protoc-gen-es
+    out: src/generated
+    include_imports: true
+    opt:
+      - target=ts
+      - import_extension=.js
+      - erasable_syntax=true
+    types:
+      - zitadel.project.v2.ProjectService
+      - zitadel.application.v2.ApplicationService
+      - zitadel.user.v2.UserService
+      - zitadel.internal_permission.v2.InternalPermissionService
+      - zitadel.org.v2.OrganizationService
+      - zitadel.action.v2.ActionService
+      - zitadel.admin.v1.AdminService
+  - local: protoc-gen-connect-es
+    out: src/generated
+    include_imports: true
+    opt:
+      - target=ts
+      - import_extension=.js
+    types:
+      - zitadel.project.v2.ProjectService
+      - zitadel.application.v2.ApplicationService
+      - zitadel.user.v2.UserService
+      - zitadel.internal_permission.v2.InternalPermissionService
+      - zitadel.org.v2.OrganizationService
+      - zitadel.action.v2.ActionService
+      - zitadel.admin.v1.AdminService

@@ -1,0 +1,185 @@
+{
+  "name": "@adaptive-ds/zitadel-cli",
+  "version": "0.1.0",
+  "description": "Typed ZITADEL v4.17.1+ API client and CLI for stable APIs, OIDC/OAuth, and isolated legacy IDP operations.",
+  "keywords": [
+    "zitadel",
+    "zitadel-cli",
+    "api-client",
+    "identity-management",
+    "cli",
+    "typescript",
+    "protobuf",
+    "connectrpc",
+    "connect-rpc",
+    "oidc",
+    "oauth2",
+    "device-authorization",
+    "result",
+    "valibot",
+    "bun"
+  ],
+  "homepage": "https://github.com/david1gp/zitadel-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/david1gp/zitadel-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/david1gp/zitadel-cli/issues"
+  },
+  "author": {
+    "name": "David Siewert",
+    "url": "https://david-siewert.com/"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/david1gp"
+  },
+  "license": "MIT",
+  "readme": "README.md",
+  "type": "module",
+  "private": false,
+  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "zitadel-cli": "./dist/cli.js"
+  },
+  "engines": {
+    "node": ">=22",
+    "bun": ">=1.3.0"
+  },
+  "scripts": {
+    "dev": "bun run src/cli.ts",
+    "generate:proto": "buf generate --template buf.gen.yaml",
+    "test": "bun test",
+    "test:w": "bun test --watch",
+    "type-check": "tsc --noEmit",
+    "build": "rm -rf ./dist && tsc -p ./tsconfig.lib.json",
+    "deploy": "bash ./ops/deploy.sh",
+    "release": "bash ./ops/release.sh",
+    "format": "biome format --write src test package.json tsconfig.json tsconfig.lib.json biome.json bunfig.toml cliff.toml buf.gen.yaml",
+    "format:check": "biome format src test package.json tsconfig.json tsconfig.lib.json biome.json bunfig.toml cliff.toml buf.gen.yaml"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.2.26",
+    "@connectrpc/connect": "^2.0.2",
+    "@connectrpc/connect-node": "^2.0.2",
+    "@stricli/core": "^1.2.5",
+    "oauth4webapi": "^3.8.7",
+    "yaml": "^2.7.0"
+  },
+  "peerDependencies": {
+    "@adaptive-ds/result": ">=0.4.0",
+    "valibot": "^1.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.2",
+    "@bufbuild/buf": "1.69.0",
+    "@bufbuild/protoc-gen-es": "2.14.0",
+    "@connectrpc/protoc-gen-connect-es": "1.7.0",
+    "@types/bun": "^1.3.13",
+    "typescript": "^6.0.3"
+  },
+  "prettier": {
+    "semi": false,
+    "printWidth": 120,
+    "trailingComma": "all"
+  },
+  "imports": {
+    "#result": "@adaptive-ds/result"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./catalog": {
+      "types": "./dist/catalog/index.d.ts",
+      "import": "./dist/catalog/index.js"
+    },
+    "./catalog/*.js": {
+      "types": "./dist/catalog/*.d.ts",
+      "import": "./dist/catalog/*.js"
+    },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js"
+    },
+    "./api/*.js": {
+      "types": "./dist/api/*.d.ts",
+      "import": "./dist/api/*.js"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "import": "./dist/config/index.js"
+    },
+    "./config/*.js": {
+      "types": "./dist/config/*.d.ts",
+      "import": "./dist/config/*.js"
+    },
+    "./legacy_v1": {
+      "types": "./dist/legacy_v1/index.d.ts",
+      "import": "./dist/legacy_v1/index.js"
+    },
+    "./legacy_v1/*.js": {
+      "types": "./dist/legacy_v1/*.d.ts",
+      "import": "./dist/legacy_v1/*.js"
+    },
+    "./v2": {
+      "types": "./dist/v2/index.d.ts",
+      "import": "./dist/v2/index.js"
+    },
+    "./v2/*.js": {
+      "types": "./dist/v2/*.d.ts",
+      "import": "./dist/v2/*.js"
+    },
+    "./protocol": {
+      "types": "./dist/protocol/index.d.ts",
+      "import": "./dist/protocol/index.js"
+    },
+    "./protocol/*.js": {
+      "types": "./dist/protocol/*.d.ts",
+      "import": "./dist/protocol/*.js"
+    },
+    "./output": {
+      "types": "./dist/output/index.d.ts",
+      "import": "./dist/output/index.js"
+    },
+    "./output/*.js": {
+      "types": "./dist/output/*.d.ts",
+      "import": "./dist/output/*.js"
+    },
+    "./request": {
+      "types": "./dist/request/index.d.ts",
+      "import": "./dist/request/index.js"
+    },
+    "./request/*.js": {
+      "types": "./dist/request/*.d.ts",
+      "import": "./dist/request/*.js"
+    },
+    "./transport": {
+      "types": "./dist/transport/index.d.ts",
+      "import": "./dist/transport/index.js"
+    },
+    "./transport/*.js": {
+      "types": "./dist/transport/*.d.ts",
+      "import": "./dist/transport/*.js"
+    },
+    "./package.json": "./package.json",
+    "./*.js": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "docs/api-discovery.md",
+    "docs/*-*.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
