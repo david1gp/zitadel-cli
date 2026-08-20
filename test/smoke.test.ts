@@ -1,8 +1,10 @@
 import { describe, expect, test } from "bun:test"
-import { PACKAGE_VERSION } from "../src/index.js"
+import pkg from "../package.json" with { type: "json" }
+import { PACKAGE_VERSION, packageVersion } from "../src/index.js"
 
 describe("scaffold", () => {
   test("exports the package version", () => {
-    expect(PACKAGE_VERSION).toBe("0.1.0")
+    expect(PACKAGE_VERSION).toBe(pkg.version)
+    expect(packageVersion).toBe(pkg.version)
   })
 })

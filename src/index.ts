@@ -1,4 +1,4 @@
-export { PACKAGE_VERSION } from "./packageVersion.js"
+export { PACKAGE_VERSION, packageVersion } from "./packageVersion.js"
 export * from "./api/index.js"
 export * from "./catalog/index.js"
 export * from "./config/index.js"
