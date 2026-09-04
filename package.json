@@ -1,6 +1,6 @@
 {
   "name": "@adaptive-ds/zitadel-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Typed ZITADEL v4.17.1+ API client and CLI for stable APIs, OIDC/OAuth, and isolated legacy IDP operations.",
   "keywords": [
     "zitadel",
