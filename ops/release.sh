@@ -47,7 +47,7 @@ printf '## [%s] - %s\n\n%s\n' "$new_version" "$date_now" "$changelog_body" >"$ch
 
 jq --arg version "$new_version" '.version = $version' "$package_json" >"$package_json.tmp"
 mv "$package_json.tmp" "$package_json"
-printf 'export const PACKAGE_VERSION = "%s"\n' "$new_version" >"$package_version_file"
+printf 'export const packageVersion = "%s"\nexport const PACKAGE_VERSION = packageVersion\n' "$new_version" >"$package_version_file"
 bun run build
 
 tag="v$new_version"
