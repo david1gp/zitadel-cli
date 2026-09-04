@@ -1,7 +1,3 @@
-export * from "./addGoogleProvider.js"
-export { AdminService } from "./adminService.js"
-export * from "./listIDPs.js"
-export * from "./legacyActions.js"
 export * from "./userGrantServiceAddUserGrant.js"
 export * from "./userGrantServiceListUserGrants.js"
 export * from "./userGrantServiceReactivateUserGrant.js"
