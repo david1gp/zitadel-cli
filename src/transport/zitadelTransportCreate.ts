@@ -7,6 +7,6 @@ export function zitadelTransportCreate(config: ZitadelConfig): Transport {
   return createConnectTransport({
     baseUrl: config.baseUrl,
     httpVersion: "1.1",
-    interceptors: [zitadelBearerInterceptorCreate(config.token)],
+    interceptors: [zitadelBearerInterceptorCreate(config.token, config.organizationId)],
   })
 }
