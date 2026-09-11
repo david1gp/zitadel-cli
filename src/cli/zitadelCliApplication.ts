@@ -1,5 +1,4 @@
-import { buildApplication, buildRouteMap, help, version } from "@stricli/core"
-import { PACKAGE_VERSION } from "../packageVersion.js"
+import { buildApplication, buildRouteMap, help } from "@stricli/core"
 import { apiCallCommand } from "./apiCallCommand.js"
 import { apiDescribeCommand } from "./apiDescribeCommand.js"
 import { apiListCommand } from "./apiListCommand.js"
@@ -124,6 +123,8 @@ import { usersVerifyPasskeyRegistrationCommand } from "./usersVerifyPasskeyRegis
 import { usersVerifyPhoneCommand } from "./usersVerifyPhoneCommand.js"
 import { usersVerifyTOTPRegistrationCommand } from "./usersVerifyTOTPRegistrationCommand.js"
 import { usersVerifyU2FRegistrationCommand } from "./usersVerifyU2FRegistrationCommand.js"
+import { zitadelCliVersionCommand } from "./zitadelCliVersionCommand.js"
+import { zitadelCliVersionIntegration } from "./zitadelCliVersionIntegration.js"
 
 const actionsTargetsRoute = buildRouteMap({
   routes: {
@@ -432,6 +433,7 @@ export const zitadelCliApplication = buildApplication(
       protocol: protocolRoute,
       projects: projectsRoute,
       users: usersRoute,
+      version: zitadelCliVersionCommand,
     },
     docs: {
       brief: "Typed ZITADEL API CLI",
@@ -455,11 +457,6 @@ export const zitadelCliApplication = buildApplication(
         useAliasInUsageLine: false,
       },
     }),
-    version: version({
-      brief: "Print version information and exit",
-      info: {
-        currentVersion: PACKAGE_VERSION,
-      },
-    }),
+    version: zitadelCliVersionIntegration,
   },
 )
