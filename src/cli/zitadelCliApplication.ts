@@ -29,6 +29,7 @@ import { applicationsListCommand } from "./applicationsListCommand.js"
 import { applicationsKeysListCommand } from "./applicationsKeysListCommand.js"
 import { applicationsReactivateCommand } from "./applicationsReactivateCommand.js"
 import { applicationsUpdateCommand } from "./applicationsUpdateCommand.js"
+import { credentialsGetCommand } from "./credentialsGetCommand.js"
 import { deviceAuthorizationCommand } from "../protocol/deviceAuthorizationCommand.js"
 import { adminListIDPsCommand } from "../legacy_v1/adminListIDPsCommand.js"
 import { adminAddGoogleProviderCommand } from "./adminAddGoogleProviderCommand.js"
@@ -84,6 +85,10 @@ import { usersDeleteCommand } from "./usersDeleteCommand.js"
 import { usersDeleteUserMetadataCommand } from "./usersDeleteUserMetadataCommand.js"
 import { usersGenerateRecoveryCodesCommand } from "./usersGenerateRecoveryCodesCommand.js"
 import { usersGetCommand } from "./usersGetCommand.js"
+import { usersGrantsAddCommand } from "./usersGrantsAddCommand.js"
+import { usersGrantsListCommand } from "./usersGrantsListCommand.js"
+import { usersGrantsRemoveCommand } from "./usersGrantsRemoveCommand.js"
+import { usersGrantsUpdateCommand } from "./usersGrantsUpdateCommand.js"
 import { usersHumanMFAInitSkippedCommand } from "./usersHumanMFAInitSkippedCommand.js"
 import { usersListAuthenticationFactorsCommand } from "./usersListAuthenticationFactorsCommand.js"
 import { usersListAuthenticationMethodTypesCommand } from "./usersListAuthenticationMethodTypesCommand.js"
@@ -232,6 +237,15 @@ const applicationsRoute = buildRouteMap({
   },
 })
 
+const credentialsRoute = buildRouteMap({
+  routes: {
+    get: credentialsGetCommand,
+  },
+  docs: {
+    brief: "Local credential operations",
+  },
+})
+
 const apiRoute = buildRouteMap({
   routes: {
     call: apiCallCommand,
@@ -348,6 +362,18 @@ const projectsRoute = buildRouteMap({
   },
 })
 
+const usersGrantsRoute = buildRouteMap({
+  routes: {
+    add: usersGrantsAddCommand,
+    list: usersGrantsListCommand,
+    remove: usersGrantsRemoveCommand,
+    update: usersGrantsUpdateCommand,
+  },
+  docs: {
+    brief: "User project-role assignment operations",
+  },
+})
+
 const usersRoute = buildRouteMap({
   routes: {
     "add-idp-link": usersAddIDPLinkCommand,
@@ -364,6 +390,7 @@ const usersRoute = buildRouteMap({
     deleteUserMetadata: usersDeleteUserMetadataCommand,
     generateRecoveryCodes: usersGenerateRecoveryCodesCommand,
     get: usersGetCommand,
+    grants: usersGrantsRoute,
     "human-mfa-init-skipped": usersHumanMFAInitSkippedCommand,
     listAuthenticationFactors: usersListAuthenticationFactorsCommand,
     listAuthenticationMethodTypes: usersListAuthenticationMethodTypesCommand,
@@ -427,6 +454,7 @@ export const zitadelCliApplication = buildApplication(
       api: apiRoute,
       actions: actionsRoute,
       applications: applicationsRoute,
+      credentials: credentialsRoute,
       internalPermissions: internalPermissionsRoute,
       legacyV1: legacyV1Route,
       organizations: organizationsRoute,

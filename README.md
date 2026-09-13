@@ -1,7 +1,7 @@
 # @adaptive-ds/zitadel-cli
 
-Typed ZITADEL API client and CLI for stable APIs, OIDC/OAuth protocol operations, and two deliberately
-isolated legacy v1 identity-provider operations.
+Typed ZITADEL API client and CLI for stable APIs, OIDC/OAuth protocol operations, and deliberately isolated
+legacy v1 compatibility operations, including user project-role grants.
 
 [![npm](https://img.shields.io/npm/v/%40adaptive-ds%2Fzitadel-cli)](https://www.npmjs.com/package/@adaptive-ds/zitadel-cli)
 [![license](https://img.shields.io/npm/l/%40adaptive-ds%2Fzitadel-cli)](./LICENSE)
@@ -22,9 +22,11 @@ The catalog contains non-deprecated stable v2 services for:
 - users
 
 The package also provides OIDC discovery, OAuth device authorization, token requests, and UserInfo requests.
-`legacy_v1` is a compatibility boundary, not general v1 support: only `AdminService.ListIDPs` and
-`AdminService.AddGoogleProvider` are included. Beta, alpha, deprecated, and other v1 methods are excluded and
-cannot be called through the catalog.
+`legacy_v1` is a compatibility boundary, not general v1 support: the catalog includes only
+`AdminService.ListIDPs` and `AdminService.AddGoogleProvider`. The separately routed Management v1 user-grant
+adapters are exposed for the shared-user workflow described in
+[`docs/central-configuration-and-user-access.md`](./docs/central-configuration-and-user-access.md). Beta, alpha,
+deprecated, and other v1 methods are excluded and cannot be called through the catalog.
 
 This is a client library and command-line tool, not a ZITADEL server or an interactive login browser. Review
 the official [ZITADEL API reference](https://zitadel.com/docs/reference/api) and the output of `api describe`
@@ -60,7 +62,10 @@ ZITADEL_TOKEN=replace-with-a-bearer-token
 ```
 
 For every setting, the precedence is explicit CLI flag/library option, then the process environment, then the
-explicitly selected `.env` file passed with `--env-file` or `envFile`. There is **no implicit `.env` loading**.
+explicitly selected `.env` file passed with `--env-file` or `envFile`. Central project/profile configuration is
+consulted after those sources, and defaults are last. There is **no implicit `.env` loading**. The complete central
+layout, selection rules, credential lookup, and user-grant workflow are documented in
+[`docs/central-configuration-and-user-access.md`](./docs/central-configuration-and-user-access.md).
 For example:
 
 ```sh
@@ -129,13 +134,15 @@ are:
 - `api`: list, describe, and call the policy-filtered catalog.
 - `actions`: targets, executions, execution functions/methods/services, and public keys.
 - `applications`: application lifecycle, keys, and client-secret operations.
+- `credentials`: local shared test-user credential lookup.
 - `internal-permissions`: administrator lifecycle operations.
 - `organizations`: organization lifecycle, domains, validation, and metadata.
 - `projects`: project lifecycle, grants, and roles.
 - `users`: user lifecycle, metadata, IDP links, OTP/TOTP/U2F/passkeys, recovery codes, secrets, keys, personal
-  access tokens, invite codes, and verification operations.
+  access tokens, invite codes, verification operations, and `grants add|list|update|remove` for project-role
+  assignments.
 - `protocol`: discovery, device authorization, token, and UserInfo.
-- `legacy-v1`: the two approved compatibility operations only.
+- `legacy-v1`: the two approved AdminService compatibility operations. User grants are under `users grants`.
 
 All generated API groups use the same request/configuration pattern:
 
@@ -207,7 +214,8 @@ zitadel-cli legacy-v1 add-google-provider --request-file ./requests/add-google-p
 ```
 
 They use the generated v1 protobuf shapes but are not mixed into the v2 service exports. Other v1 methods,
-deprecated methods, alpha methods, and beta methods are rejected by the policy-filtered catalog.
+deprecated methods, alpha methods, and beta methods are rejected by the policy-filtered catalog. User-grant adapters
+are available from `@adaptive-ds/zitadel-cli/legacy_v1` but are intentionally not catalog routes.
 
 ## Library
 
@@ -261,6 +269,40 @@ if (!discovery.success) {
   console.log(discovery.data.issuer, discovery.data.token_endpoint)
 }
 ```
+
+Configuration and central credentials use the same precedence and file validation as the CLI. The loaders are
+available from the root export or the `@adaptive-ds/zitadel-cli/config` entry point and return
+`PromiseResult<...>` values:
+
+```ts
+import {
+  credentialsConfigRead,
+  testUserIdResolve,
+  zitadelConfigResolve,
+} from "@adaptive-ds/zitadel-cli"
+
+const selection = { project: "application" }
+const config = await zitadelConfigResolve(selection)
+if (!config.success) {
+  console.error(`${config.op}: ${config.errorMessage}`)
+} else {
+  console.log(config.data.baseUrl, config.data.projectId)
+}
+
+const credentials = await credentialsConfigRead(selection)
+if (!credentials.success) {
+  console.error(`${credentials.op}: ${credentials.errorMessage}`)
+} else {
+  console.log(credentials.data.testUsers.admin?.username)
+}
+
+const userId = await testUserIdResolve({ ...selection, user: "admin" })
+if (userId.success) console.log(userId.data)
+```
+
+`zitadelConfigResolve` returns `ZitadelConfigResolution`, `credentialsConfigRead` returns `CredentialsConfig`, and
+`testUserIdResolve` returns the selected test user's ID. Pass `profile`, `project`, `envFile`, or an explicit `env`
+object to the loaders when a consumer needs to select a different central configuration context.
 
 `zitadelConfigCreate`, `apiCall`, `apiCatalogList`, `apiMethodDescribe`, `deviceAuthorizationRequest`,
 `oauthTokenRequest`, and `oidcUserInfo` are exported for composing the same workflows without the CLI. Inject a

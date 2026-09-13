@@ -1,20 +1,15 @@
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { legacyManagementRequest } from "./legacyManagementRequest.js"
+import type { EndpointCallOptions } from "../v2/internal/endpointCall.js"
 
 export type UserGrantServiceAddUserGrantRequest = {
   readonly projectId: string
   readonly roleKeys: readonly string[]
 }
 
-export type UserGrantServiceAddUserGrantOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserGrantServiceAddUserGrantOptions = EndpointCallOptions & {
   readonly fetch?: (input: string | URL | Request, init?: RequestInit) => Promise<Response>
   readonly request: UserGrantServiceAddUserGrantRequest
-  readonly token?: string
   readonly userId: string
 }
 
@@ -22,11 +17,8 @@ export async function userGrantServiceAddUserGrant(
   options: UserGrantServiceAddUserGrantOptions,
 ): PromiseResult<unknown> {
   return legacyManagementRequest({
-    baseUrl: options.baseUrl,
+    ...options,
     body: options.request,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
     fetch: options.fetch,
     method: "POST",
     operation: "userGrantServiceAddUserGrant",

@@ -1,27 +1,21 @@
 import type { PromiseResult } from "#result"
-import { legacyManagementRequest } from "./legacyManagementRequest.js"
 import type { EndpointCallOptions } from "../v2/internal/endpointCall.js"
+import { legacyManagementRequest } from "./legacyManagementRequest.js"
 
-export type UserGrantServiceUpdateUserGrantRequest = {
-  readonly roleKeys: readonly string[]
-}
-
-export type UserGrantServiceUpdateUserGrantOptions = EndpointCallOptions & {
+export type UserGrantServiceDeleteUserGrantOptions = EndpointCallOptions & {
   readonly fetch?: (input: string | URL | Request, init?: RequestInit) => Promise<Response>
   readonly grantId: string
-  readonly request: UserGrantServiceUpdateUserGrantRequest
   readonly userId: string
 }
 
-export async function userGrantServiceUpdateUserGrant(
-  options: UserGrantServiceUpdateUserGrantOptions,
+export async function userGrantServiceDeleteUserGrant(
+  options: UserGrantServiceDeleteUserGrantOptions,
 ): PromiseResult<unknown> {
   return legacyManagementRequest({
     ...options,
-    body: options.request,
     fetch: options.fetch,
-    method: "PUT",
-    operation: "userGrantServiceUpdateUserGrant",
+    method: "DELETE",
+    operation: "userGrantServiceDeleteUserGrant",
     path: `/management/v1/users/${encodeURIComponent(options.userId)}/grants/${encodeURIComponent(options.grantId)}`,
     token: options.token,
   })

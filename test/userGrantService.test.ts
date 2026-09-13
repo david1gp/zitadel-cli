@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import {
   userGrantServiceAddUserGrant,
+  userGrantServiceDeleteUserGrant,
   userGrantServiceListUserGrants,
   userGrantServiceReactivateUserGrant,
   userGrantServiceUpdateUserGrant,
@@ -120,6 +121,12 @@ describe("legacy Management user-grant operations", () => {
       request: { roleKeys: ["admin"] },
       userId: "user-1",
     })
+    const deleteResult = await userGrantServiceDeleteUserGrant({
+      config,
+      fetch,
+      grantId: "grant-1",
+      userId: "user-1",
+    })
     const reactivateResult = await userGrantServiceReactivateUserGrant({
       config,
       fetch,
@@ -129,15 +136,52 @@ describe("legacy Management user-grant operations", () => {
 
     expect(addResult.success).toBe(true)
     expect(updateResult.success).toBe(true)
+    expect(deleteResult.success).toBe(true)
     expect(reactivateResult.success).toBe(true)
     expect(requests.map((request) => [request.method, new URL(request.url).pathname])).toEqual([
       ["POST", "/management/v1/users/user-1/grants"],
       ["PUT", "/management/v1/users/user-1/grants/grant-1"],
+      ["DELETE", "/management/v1/users/user-1/grants/grant-1"],
       ["POST", "/management/v1/users/user-1/grants/grant-1/_reactivate"],
     ])
     expect(await requests[0]?.clone().text()).toBe('{"projectId":"project-1","roleKeys":["admin"]}')
     expect(await requests[1]?.clone().text()).toBe('{"roleKeys":["admin"]}')
-    expect(await requests[2]?.clone().text()).toBe("{}")
+    expect(await requests[2]?.clone().text()).toBe("")
+    expect(await requests[3]?.clone().text()).toBe("{}")
+  })
+
+  test("URL-encodes user and grant IDs in mutation paths", async () => {
+    const requests: Request[] = []
+    const fetch = async (input: string | URL | Request, init?: RequestInit) => {
+      requests.push(new Request(String(input), init))
+      return new Response("{}")
+    }
+
+    await userGrantServiceAddUserGrant({
+      config,
+      fetch,
+      request: { projectId: "project-1", roleKeys: ["admin"] },
+      userId: "user/id",
+    })
+    await userGrantServiceUpdateUserGrant({
+      config,
+      fetch,
+      grantId: "grant/id",
+      request: { roleKeys: ["admin"] },
+      userId: "user/id",
+    })
+    await userGrantServiceDeleteUserGrant({
+      config,
+      fetch,
+      grantId: "grant/id",
+      userId: "user/id",
+    })
+
+    expect(requests.map((request) => [request.method, new URL(request.url).pathname])).toEqual([
+      ["POST", "/management/v1/users/user%2Fid/grants"],
+      ["PUT", "/management/v1/users/user%2Fid/grants/grant%2Fid"],
+      ["DELETE", "/management/v1/users/user%2Fid/grants/grant%2Fid"],
+    ])
   })
 
   test("does not expose an HTTP error body or bearer token", async () => {

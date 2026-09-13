@@ -1,6 +1,6 @@
 import { createResult, createResultError, type PromiseResult, type Result } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { legacyManagementRequest } from "./legacyManagementRequest.js"
+import type { EndpointCallOptions } from "../v2/internal/endpointCall.js"
 
 export type UserGrantServiceListUserGrantsRequest = {
   readonly queries: readonly UserGrantSearchQuery[]
@@ -37,14 +37,9 @@ export type UserGrantServiceListUserGrantsResponse = {
   readonly totalResult?: bigint
 }
 
-export type UserGrantServiceListUserGrantsOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserGrantServiceListUserGrantsOptions = EndpointCallOptions & {
   readonly fetch?: (input: string | URL | Request, init?: RequestInit) => Promise<Response>
   readonly request: UserGrantServiceListUserGrantsRequest
-  readonly token?: string
 }
 
 const userGrantListError = (message: string) => createResultError("userGrantServiceListUserGrants", message)
@@ -168,10 +163,8 @@ export async function userGrantServiceListUserGrants(
   options: UserGrantServiceListUserGrantsOptions,
 ): PromiseResult<UserGrantServiceListUserGrantsResponse> {
   const responseResult = await legacyManagementRequest({
-    baseUrl: options.baseUrl,
+    ...options,
     config: options.config,
-    env: options.env,
-    envFile: options.envFile,
     fetch: options.fetch,
     method: "POST",
     operation: "userGrantServiceListUserGrants",
