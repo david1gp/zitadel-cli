@@ -64,6 +64,43 @@ describe("legacy Management user-grant operations", () => {
     })
   })
 
+  test("accepts grant entries where roleKeys is omitted/undefined", async () => {
+    const accepted = await userGrantServiceListUserGrants({
+      config,
+      fetch: fetchResponse({
+        details: { totalResult: "1" },
+        result: [
+          {
+            id: "grant-no-roles",
+            orgId: "org-1",
+            projectId: "project-1",
+            state: "USER_GRANT_STATE_ACTIVE",
+            userId: "user-1",
+          },
+        ],
+      }),
+      request: {
+        query: { asc: true, limit: 100, offset: 0 },
+      },
+    })
+    expect(accepted).toEqual({
+      success: true,
+      data: {
+        result: [
+          {
+            id: "grant-no-roles",
+            orgId: "org-1",
+            projectId: "project-1",
+            roleKeys: [],
+            state: 1,
+            userId: "user-1",
+          },
+        ],
+        totalResult: 1n,
+      },
+    })
+  })
+
   test("accepts only the exact metadata-only empty-grant compatibility response", async () => {
     const accepted = await userGrantServiceListUserGrants({
       config,

@@ -74,15 +74,16 @@ const userGrantListItemParse = (value: unknown): Result<UserGrant> => {
   if (stringFields.some((field) => typeof candidate[field] !== "string" || candidate[field] === "")) {
     return userGrantListError("user grant response contains a malformed result")
   }
+  const rawRoleKeys = candidate.roleKeys === undefined ? [] : candidate.roleKeys
   if (
-    !Array.isArray(candidate.roleKeys) ||
-    candidate.roleKeys.some((role) => typeof role !== "string" || role === "")
+    !Array.isArray(rawRoleKeys) ||
+    rawRoleKeys.some((role) => typeof role !== "string" || role === "")
   ) {
     return userGrantListError("user grant response contains a malformed result")
   }
   const stateResult = userGrantStateParse(candidate.state)
   if (!stateResult.success) return stateResult
-  const roleKeys = candidate.roleKeys as string[]
+  const roleKeys = rawRoleKeys as string[]
   if (new Set(roleKeys).size !== roleKeys.length) {
     return userGrantListError("user grant response contains duplicate role keys")
   }
