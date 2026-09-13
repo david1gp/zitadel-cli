@@ -1,24 +1,16 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   ActivateProjectRequestSchema,
   type ActivateProjectResponse,
   ProjectService,
 } from "../generated/zitadel/project/v2/project_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 
 export type ProjectServiceActivateProjectRequest = MessageInitShape<typeof ActivateProjectRequestSchema>
 
-export type ProjectServiceActivateProjectOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type ProjectServiceActivateProjectOptions = EndpointCallOptions & {
   readonly request?: ProjectServiceActivateProjectRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -31,12 +23,10 @@ export async function projectServiceActivateProject(
 ): PromiseResult<ActivateProjectResponse> {
   const op = "projectServiceActivateProject"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.activateProject(request),
     operation: op,
+    projectIdField: true,
     request: options.request ?? {},
     service: ProjectService,
     token: options.token,

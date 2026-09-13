@@ -1,24 +1,16 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   AddProjectRoleRequestSchema,
   type AddProjectRoleResponse,
   ProjectService,
 } from "../generated/zitadel/project/v2/project_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 
 export type ProjectServiceAddProjectRoleRequest = MessageInitShape<typeof AddProjectRoleRequestSchema>
 
-export type ProjectServiceAddProjectRoleOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type ProjectServiceAddProjectRoleOptions = EndpointCallOptions & {
   readonly request?: ProjectServiceAddProjectRoleRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -31,12 +23,10 @@ export async function projectServiceAddProjectRole(
 ): PromiseResult<AddProjectRoleResponse> {
   const op = "projectServiceAddProjectRole"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.addProjectRole(request),
     operation: op,
+    projectIdField: true,
     request: options.request ?? {},
     service: ProjectService,
     token: options.token,

@@ -1,24 +1,16 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   VerifyU2FRegistrationRequestSchema,
   type VerifyU2FRegistrationResponse,
 } from "../generated/zitadel/user/v2/user_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 import { UserService } from "./userService.js"
 
 export type UserServiceVerifyU2FRegistrationRequest = MessageInitShape<typeof VerifyU2FRegistrationRequestSchema>
 
-export type UserServiceVerifyU2FRegistrationOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserServiceVerifyU2FRegistrationOptions = EndpointCallOptions & {
   readonly request?: UserServiceVerifyU2FRegistrationRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -31,10 +23,7 @@ export async function userServiceVerifyU2FRegistration(
 ): PromiseResult<VerifyU2FRegistrationResponse> {
   const op = "userServiceVerifyU2FRegistration"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.verifyU2FRegistration(request),
     operation: op,
     request: options.request ?? {},

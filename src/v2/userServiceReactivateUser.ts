@@ -1,24 +1,16 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   ReactivateUserRequestSchema,
   type ReactivateUserResponse,
 } from "../generated/zitadel/user/v2/user_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 import { UserService } from "./userService.js"
 
 export type UserServiceReactivateUserRequest = MessageInitShape<typeof ReactivateUserRequestSchema>
 
-export type UserServiceReactivateUserOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserServiceReactivateUserOptions = EndpointCallOptions & {
   readonly request?: UserServiceReactivateUserRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -31,10 +23,7 @@ export async function userServiceReactivateUser(
 ): PromiseResult<ReactivateUserResponse> {
   const op = "userServiceReactivateUser"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.reactivateUser(request),
     operation: op,
     request: options.request ?? {},

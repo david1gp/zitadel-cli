@@ -1,21 +1,13 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { RemoveU2FRequestSchema, type RemoveU2FResponse } from "../generated/zitadel/user/v2/user_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 import { UserService } from "./userService.js"
 
 export type UserServiceRemoveU2FRequest = MessageInitShape<typeof RemoveU2FRequestSchema>
 
-export type UserServiceRemoveU2FOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserServiceRemoveU2FOptions = EndpointCallOptions & {
   readonly request?: UserServiceRemoveU2FRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -28,10 +20,7 @@ export async function userServiceRemoveU2F(
 ): PromiseResult<RemoveU2FResponse> {
   const op = "userServiceRemoveU2F"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.removeU2F(request),
     operation: op,
     request: options.request ?? {},

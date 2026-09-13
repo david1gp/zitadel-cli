@@ -1,26 +1,18 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   InternalPermissionService,
   ListAdministratorsRequestSchema,
   type ListAdministratorsResponse,
 } from "../generated/zitadel/internal_permission/v2/internal_permission_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 
 export type InternalPermissionServiceListAdministratorsRequest = MessageInitShape<
   typeof ListAdministratorsRequestSchema
 >
 
-export type InternalPermissionServiceListAdministratorsOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type InternalPermissionServiceListAdministratorsOptions = EndpointCallOptions & {
   readonly request?: InternalPermissionServiceListAdministratorsRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -33,10 +25,7 @@ export async function internalPermissionServiceListAdministrators(
 ): PromiseResult<ListAdministratorsResponse> {
   const op = "internalPermissionServiceListAdministrators"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.listAdministrators(request),
     operation: op,
     request: options.request ?? {},

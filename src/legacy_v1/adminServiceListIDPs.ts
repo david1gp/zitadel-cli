@@ -1,13 +1,11 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport as ConnectTransport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   AdminService as GeneratedAdminService,
   ListIDPsRequestSchema,
   type ListIDPsResponse,
 } from "../generated/zitadel/admin_pb.js"
-import { endpointCall } from "../v2/internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "../v2/internal/endpointCall.js"
 
 const listIDPsAdminService = {
   ...GeneratedAdminService,
@@ -16,14 +14,8 @@ const listIDPsAdminService = {
 
 export type AdminServiceListIDPsRequest = MessageInitShape<typeof ListIDPsRequestSchema>
 
-export type AdminServiceListIDPsOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type AdminServiceListIDPsOptions = EndpointCallOptions & {
   readonly request?: AdminServiceListIDPsRequest
-  readonly token?: string
-  readonly transport?: ConnectTransport
 }
 
 /**
@@ -39,10 +31,7 @@ export async function adminServiceListIDPs(options: AdminServiceListIDPsOptions 
   const op = "adminServiceListIDPs"
 
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.listIDPs(request),
     operation: op,
     request: options.request ?? {},

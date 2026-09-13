@@ -1,6 +1,6 @@
 import { createResult, createResultError, type PromiseResult, type Result } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { legacyManagementRequest } from "./legacyManagementRequest.js"
+import type { EndpointCallOptions } from "../v2/internal/endpointCall.js"
 
 export type ManagementServiceListActionsRequest = {
   readonly query: {
@@ -29,14 +29,9 @@ export type ManagementServiceListActionsResponse = {
   readonly result: readonly LegacyAction[]
 }
 
-export type ManagementServiceListActionsOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type ManagementServiceListActionsOptions = EndpointCallOptions & {
   readonly fetch?: (input: string | URL | Request, init?: RequestInit) => Promise<Response>
   readonly request: ManagementServiceListActionsRequest
-  readonly token?: string
 }
 
 const managementServiceListActionsError = (message: string) =>
@@ -65,11 +60,8 @@ export async function managementServiceListActions(
   options: ManagementServiceListActionsOptions,
 ): PromiseResult<ManagementServiceListActionsResponse> {
   const responseResult = await legacyManagementRequest({
-    baseUrl: options.baseUrl,
+    ...options,
     body: options.request,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
     fetch: options.fetch,
     method: "POST",
     operation: "managementServiceListActions",

@@ -47,6 +47,20 @@ describe("legacy_v1 adapter", () => {
     )
   })
 
+  test("shares central configuration flags with legacy v1 commands", () => {
+    const help = generateHelpTextForAllCommands(zitadelCliApplication).find(
+      ([route]) => route === "zitadel-cli legacy-v1 list-idps",
+    )?.[1]
+
+    expect(help).toContain("--base-url URL")
+    expect(help).toContain("--env-file PATH")
+    expect(help).toContain("--organization-id ID")
+    expect(help).toContain("--profile NAME")
+    expect(help).toContain("--project NAME")
+    expect(help).toContain("--project-id ID")
+    expect(help).toContain("--token TOKEN")
+  })
+
   test("does not expose legacy v1 methods from the stable root barrel", async () => {
     const stableExports = await import("../src/index.js")
 

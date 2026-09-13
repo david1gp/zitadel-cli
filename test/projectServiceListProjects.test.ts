@@ -7,13 +7,18 @@ import type { StreamRequest, UnaryRequest, UnaryResponse, Transport } from "@con
 import { parse as yamlParse } from "yaml"
 import { zitadelConfigCreate } from "../src/config/index.js"
 import {
+  GetProjectResponseSchema,
   ListProjectsRequestSchema,
   ListProjectsResponseSchema,
   ProjectService,
 } from "../src/generated/zitadel/project/v2/project_service_pb.js"
 import { messageSerialize } from "../src/output/index.js"
 import { zitadelBearerInterceptorCreate } from "../src/transport/zitadelBearerInterceptorCreate.js"
-import { projectListProjectsRequestParse, projectServiceListProjects } from "../src/v2/index.js"
+import {
+  projectListProjectsRequestParse,
+  projectServiceGetProject,
+  projectServiceListProjects,
+} from "../src/v2/index.js"
 
 describe("ProjectService.ListProjects", () => {
   test("loads a selected env file with process and flag precedence", async () => {
@@ -107,6 +112,50 @@ describe("ProjectService.ListProjects", () => {
       return
     }
     expect(filter.filter.value.projectName).toBe("Example")
+  })
+
+  test("uses the resolved project ID only for applicable request fields", async () => {
+    const requests: Array<{ readonly projectId?: string }> = []
+    const response = create(GetProjectResponseSchema, {})
+    const transport = {
+      stream: async () => {
+        throw new Error("unexpected stream")
+      },
+      unary: async (...args: unknown[]) => {
+        requests.push(args[4] as { readonly projectId?: string })
+        return {
+          header: new Headers(),
+          message: response,
+          service: ProjectService,
+          stream: false,
+          trailer: new Headers(),
+        }
+      },
+    } as unknown as Transport
+
+    const explicit = await projectServiceGetProject({
+      config: { baseUrl: "https://example.test", projectId: "default-project", token: "token" },
+      request: { projectId: "request-project" },
+      transport,
+    })
+    expect(explicit.success).toBe(true)
+    expect(requests[0]?.projectId).toBe("request-project")
+
+    const defaulted = await projectServiceGetProject({
+      config: { baseUrl: "https://example.test", projectId: "default-project", token: "token" },
+      request: {},
+      transport,
+    })
+    expect(defaulted.success).toBe(true)
+    expect(requests[1]?.projectId).toBe("default-project")
+
+    const unrelated = await projectServiceListProjects({
+      config: { baseUrl: "https://example.test", projectId: "default-project", token: "token" },
+      request: {},
+      transport,
+    })
+    expect(unrelated.success).toBe(true)
+    expect(requests[2]?.projectId).toBeUndefined()
   })
 
   test("returns JSON and YAML using protobuf serialization", () => {

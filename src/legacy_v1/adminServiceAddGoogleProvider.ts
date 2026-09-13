@@ -1,13 +1,11 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport as ConnectTransport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   AddGoogleProviderRequestSchema,
   AdminService as GeneratedAdminService,
   type AddGoogleProviderResponse,
 } from "../generated/zitadel/admin_pb.js"
-import { endpointCall } from "../v2/internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "../v2/internal/endpointCall.js"
 
 const addGoogleProviderAdminService = {
   ...GeneratedAdminService,
@@ -16,14 +14,8 @@ const addGoogleProviderAdminService = {
 
 export type AdminServiceAddGoogleProviderRequest = MessageInitShape<typeof AddGoogleProviderRequestSchema>
 
-export type AdminServiceAddGoogleProviderOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type AdminServiceAddGoogleProviderOptions = EndpointCallOptions & {
   readonly request?: AdminServiceAddGoogleProviderRequest
-  readonly token?: string
-  readonly transport?: ConnectTransport
 }
 
 /**
@@ -41,10 +33,7 @@ export async function adminServiceAddGoogleProvider(
   const op = "adminServiceAddGoogleProvider"
 
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.addGoogleProvider(request),
     operation: op,
     request: options.request ?? {},

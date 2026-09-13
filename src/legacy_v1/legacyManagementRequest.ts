@@ -9,9 +9,13 @@ type LegacyManagementRequestOptions = {
   readonly env?: Readonly<Record<string, string | undefined>>
   readonly envFile?: string
   readonly fetch?: (input: string | URL | Request, init?: RequestInit) => Promise<Response>
-  readonly method: "GET" | "POST" | "PUT"
+  readonly method: "DELETE" | "GET" | "POST" | "PUT"
+  readonly organizationId?: string
   readonly operation: string
   readonly path: string
+  readonly profile?: string
+  readonly project?: string
+  readonly projectId?: string
   readonly token?: string
 }
 
@@ -26,6 +30,10 @@ export async function legacyManagementRequest(options: LegacyManagementRequestOp
     config: options.config,
     env: options.env,
     envFile: options.envFile,
+    organizationId: options.organizationId,
+    profile: options.profile,
+    project: options.project,
+    projectId: options.projectId,
     token: options.token,
   })
   if (!configResult.success) return configResult

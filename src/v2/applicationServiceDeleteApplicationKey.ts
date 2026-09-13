@@ -1,24 +1,16 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   ApplicationService,
   DeleteApplicationKeyRequestSchema,
   type DeleteApplicationKeyResponse,
 } from "../generated/zitadel/application/v2/application_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 
 export type ApplicationServiceDeleteApplicationKeyRequest = MessageInitShape<typeof DeleteApplicationKeyRequestSchema>
 
-export type ApplicationServiceDeleteApplicationKeyOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type ApplicationServiceDeleteApplicationKeyOptions = EndpointCallOptions & {
   readonly request?: ApplicationServiceDeleteApplicationKeyRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -31,12 +23,10 @@ export async function applicationServiceDeleteApplicationKey(
 ): PromiseResult<DeleteApplicationKeyResponse> {
   const op = "applicationServiceDeleteApplicationKey"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.deleteApplicationKey(request),
     operation: op,
+    projectIdField: true,
     request: options.request ?? {},
     service: ApplicationService,
     token: options.token,

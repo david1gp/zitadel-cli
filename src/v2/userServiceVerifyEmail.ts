@@ -1,21 +1,13 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { VerifyEmailRequestSchema, type VerifyEmailResponse } from "../generated/zitadel/user/v2/user_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 import { UserService } from "./userService.js"
 
 export type UserServiceVerifyEmailRequest = MessageInitShape<typeof VerifyEmailRequestSchema>
 
-export type UserServiceVerifyEmailOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserServiceVerifyEmailOptions = EndpointCallOptions & {
   readonly request?: UserServiceVerifyEmailRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -28,10 +20,7 @@ export async function userServiceVerifyEmail(
 ): PromiseResult<VerifyEmailResponse> {
   const op = "userServiceVerifyEmail"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.verifyEmail(request),
     operation: op,
     request: options.request ?? {},

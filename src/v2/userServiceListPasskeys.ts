@@ -1,21 +1,13 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { ListPasskeysRequestSchema, type ListPasskeysResponse } from "../generated/zitadel/user/v2/user_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 import { UserService } from "./userService.js"
 
 export type UserServiceListPasskeysRequest = MessageInitShape<typeof ListPasskeysRequestSchema>
 
-export type UserServiceListPasskeysOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserServiceListPasskeysOptions = EndpointCallOptions & {
   readonly request?: UserServiceListPasskeysRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -28,10 +20,7 @@ export async function userServiceListPasskeys(
 ): PromiseResult<ListPasskeysResponse> {
   const op = "userServiceListPasskeys"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.listPasskeys(request),
     operation: op,
     request: options.request ?? {},

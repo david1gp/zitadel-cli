@@ -1,26 +1,18 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   CreatePasskeyRegistrationLinkRequestSchema,
   type CreatePasskeyRegistrationLinkResponse,
 } from "../generated/zitadel/user/v2/user_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 import { UserService } from "./userService.js"
 
 export type UserServiceCreatePasskeyRegistrationLinkRequest = MessageInitShape<
   typeof CreatePasskeyRegistrationLinkRequestSchema
 >
 
-export type UserServiceCreatePasskeyRegistrationLinkOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserServiceCreatePasskeyRegistrationLinkOptions = EndpointCallOptions & {
   readonly request?: UserServiceCreatePasskeyRegistrationLinkRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -33,10 +25,7 @@ export async function userServiceCreatePasskeyRegistrationLink(
 ): PromiseResult<CreatePasskeyRegistrationLinkResponse> {
   const op = "userServiceCreatePasskeyRegistrationLink"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.createPasskeyRegistrationLink(request),
     operation: op,
     request: options.request ?? {},

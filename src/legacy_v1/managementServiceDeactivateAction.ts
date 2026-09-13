@@ -1,26 +1,18 @@
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { legacyManagementRequest } from "./legacyManagementRequest.js"
+import type { EndpointCallOptions } from "../v2/internal/endpointCall.js"
 
-export type ManagementServiceDeactivateActionOptions = {
+export type ManagementServiceDeactivateActionOptions = EndpointCallOptions & {
   readonly actionId: string
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
   readonly fetch?: (input: string | URL | Request, init?: RequestInit) => Promise<Response>
-  readonly token?: string
 }
 
 export async function managementServiceDeactivateAction(
   options: ManagementServiceDeactivateActionOptions,
 ): PromiseResult<unknown> {
   return legacyManagementRequest({
-    baseUrl: options.baseUrl,
+    ...options,
     body: {},
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
     fetch: options.fetch,
     method: "POST",
     operation: "managementServiceDeactivateAction",

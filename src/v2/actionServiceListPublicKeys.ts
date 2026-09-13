@@ -1,24 +1,16 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   ActionService,
   ListPublicKeysRequestSchema,
   type ListPublicKeysResponse,
 } from "../generated/zitadel/action/v2/action_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 
 export type ActionServiceListPublicKeysRequest = MessageInitShape<typeof ListPublicKeysRequestSchema>
 
-export type ActionServiceListPublicKeysOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type ActionServiceListPublicKeysOptions = EndpointCallOptions & {
   readonly request?: ActionServiceListPublicKeysRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -31,10 +23,7 @@ export async function actionServiceListPublicKeys(
 ): PromiseResult<ListPublicKeysResponse> {
   const op = "actionServiceListPublicKeys"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.listPublicKeys(request),
     operation: op,
     request: options.request ?? {},

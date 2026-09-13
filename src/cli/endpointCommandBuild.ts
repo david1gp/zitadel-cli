@@ -7,7 +7,11 @@ import { messageSerialize, type MessageOutputFormat } from "../output/index.js"
 type EndpointCommandFlags = {
   readonly baseUrl?: string
   readonly envFile?: string
+  readonly organizationId?: string
   readonly output: MessageOutputFormat
+  readonly profile?: string
+  readonly project?: string
+  readonly projectId?: string
   readonly requestFile?: string
   readonly requestJson?: string
   readonly token?: string
@@ -22,6 +26,10 @@ type EndpointCommandCallOptions<Request> = {
   readonly baseUrl?: string
   readonly env?: Readonly<Record<string, string | undefined>>
   readonly envFile?: string
+  readonly organizationId?: string
+  readonly profile?: string
+  readonly project?: string
+  readonly projectId?: string
   readonly request: Request
   readonly token?: string
 }
@@ -57,6 +65,13 @@ const endpointCommandFlags = {
     parse: (input: string) => input,
     placeholder: "PATH",
   },
+  organizationId: {
+    brief: "Organization ID (overrides environment and env file)",
+    kind: "parsed",
+    optional: true,
+    parse: (input: string) => input,
+    placeholder: "ID",
+  },
   output: {
     brief: "Output format",
     default: "json",
@@ -75,6 +90,27 @@ const endpointCommandFlags = {
     optional: true,
     parse: (input: string) => input,
     placeholder: "JSON",
+  },
+  profile: {
+    brief: "Configuration profile (overrides environment, env file, and project)",
+    kind: "parsed",
+    optional: true,
+    parse: (input: string) => input,
+    placeholder: "NAME",
+  },
+  project: {
+    brief: "Named project configuration",
+    kind: "parsed",
+    optional: true,
+    parse: (input: string) => input,
+    placeholder: "NAME",
+  },
+  projectId: {
+    brief: "Project ID (overrides environment and env file)",
+    kind: "parsed",
+    optional: true,
+    parse: (input: string) => input,
+    placeholder: "ID",
   },
   token: {
     brief: "Bearer token (overrides environment and env file)",
@@ -105,6 +141,10 @@ export function endpointCommandBuild<
       baseUrl: flags.baseUrl,
       env: this.process.env,
       envFile: flags.envFile,
+      organizationId: flags.organizationId,
+      profile: flags.profile,
+      project: flags.project,
+      projectId: flags.projectId,
       request: requestResult.data,
       token: flags.token,
     })

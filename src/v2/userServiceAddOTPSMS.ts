@@ -1,21 +1,13 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { AddOTPSMSRequestSchema, type AddOTPSMSResponse } from "../generated/zitadel/user/v2/user_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 import { UserService } from "./userService.js"
 
 export type UserServiceAddOTPSMSRequest = MessageInitShape<typeof AddOTPSMSRequestSchema>
 
-export type UserServiceAddOTPSMSOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type UserServiceAddOTPSMSOptions = EndpointCallOptions & {
   readonly request?: UserServiceAddOTPSMSRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -28,10 +20,7 @@ export async function userServiceAddOTPSMS(
 ): PromiseResult<AddOTPSMSResponse> {
   const op = "userServiceAddOTPSMS"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.addOTPSMS(request),
     operation: op,
     request: options.request ?? {},

@@ -1,24 +1,16 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   ActionService,
   ActivatePublicKeyRequestSchema,
   type ActivatePublicKeyResponse,
 } from "../generated/zitadel/action/v2/action_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 
 export type ActionServiceActivatePublicKeyRequest = MessageInitShape<typeof ActivatePublicKeyRequestSchema>
 
-export type ActionServiceActivatePublicKeyOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type ActionServiceActivatePublicKeyOptions = EndpointCallOptions & {
   readonly request?: ActionServiceActivatePublicKeyRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -31,10 +23,7 @@ export async function actionServiceActivatePublicKey(
 ): PromiseResult<ActivatePublicKeyResponse> {
   const op = "actionServiceActivatePublicKey"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.activatePublicKey(request),
     operation: op,
     request: options.request ?? {},

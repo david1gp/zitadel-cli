@@ -1,26 +1,18 @@
 import type { MessageInitShape } from "@bufbuild/protobuf"
-import type { Transport } from "@connectrpc/connect"
 import type { PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import {
   DeleteAdministratorRequestSchema,
   InternalPermissionService,
   type DeleteAdministratorResponse,
 } from "../generated/zitadel/internal_permission/v2/internal_permission_service_pb.js"
-import { endpointCall } from "./internal/endpointCall.js"
+import { endpointCall, type EndpointCallOptions } from "./internal/endpointCall.js"
 
 export type InternalPermissionServiceDeleteAdministratorRequest = MessageInitShape<
   typeof DeleteAdministratorRequestSchema
 >
 
-export type InternalPermissionServiceDeleteAdministratorOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type InternalPermissionServiceDeleteAdministratorOptions = EndpointCallOptions & {
   readonly request?: InternalPermissionServiceDeleteAdministratorRequest
-  readonly token?: string
-  readonly transport?: Transport
 }
 
 /**
@@ -33,10 +25,7 @@ export async function internalPermissionServiceDeleteAdministrator(
 ): PromiseResult<DeleteAdministratorResponse> {
   const op = "internalPermissionServiceDeleteAdministrator"
   return endpointCall({
-    baseUrl: options.baseUrl,
-    config: options.config,
-    env: options.env,
-    envFile: options.envFile,
+    ...options,
     invoke: (client, request) => client.deleteAdministrator(request),
     operation: op,
     request: options.request ?? {},

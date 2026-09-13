@@ -1,6 +1,6 @@
 import { createResult, createResultError, type PromiseResult } from "#result"
-import type { ZitadelConfig } from "../config/zitadelConfig.js"
 import { legacyManagementRequest } from "./legacyManagementRequest.js"
+import type { EndpointCallOptions } from "../v2/internal/endpointCall.js"
 
 export type LegacyFlowAction = {
   readonly id?: string
@@ -20,14 +20,9 @@ export type ManagementServiceGetFlowResponse = {
   readonly flow: LegacyFlow
 }
 
-export type ManagementServiceGetFlowOptions = {
-  readonly baseUrl?: string
-  readonly config?: ZitadelConfig
-  readonly env?: Readonly<Record<string, string | undefined>>
-  readonly envFile?: string
+export type ManagementServiceGetFlowOptions = EndpointCallOptions & {
   readonly fetch?: (input: string | URL | Request, init?: RequestInit) => Promise<Response>
   readonly flow: string
-  readonly token?: string
 }
 
 const managementServiceGetFlowError = (message: string) => createResultError("managementServiceGetFlow", message)
@@ -36,10 +31,8 @@ export async function managementServiceGetFlow(
   options: ManagementServiceGetFlowOptions,
 ): PromiseResult<ManagementServiceGetFlowResponse> {
   const responseResult = await legacyManagementRequest({
-    baseUrl: options.baseUrl,
+    ...options,
     config: options.config,
-    env: options.env,
-    envFile: options.envFile,
     fetch: options.fetch,
     method: "GET",
     operation: "managementServiceGetFlow",
