@@ -21,7 +21,11 @@ describe("ApplicationService.UpdateApplication", () => {
         oidcConfiguration: {
           applicationType: "OIDC_APP_TYPE_WEB",
           authMethodType: "OIDC_AUTH_METHOD_TYPE_BASIC",
+          accessTokenRoleAssertion: true,
+          accessTokenType: "OIDC_TOKEN_TYPE_JWT",
+          additionalOrigins: ["https://example.test"],
           grantTypes: ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE"],
+          idTokenUserinfoAssertion: false,
           postLogoutRedirectUris: ["https://example.test/logout"],
           redirectUris: ["https://example.test/callback"],
           responseTypes: ["OIDC_RESPONSE_TYPE_CODE"],
@@ -44,6 +48,10 @@ describe("ApplicationService.UpdateApplication", () => {
     }
     expect(result.data.applicationType.value.redirectUris).toEqual(["https://example.test/callback"])
     expect(result.data.applicationType.value.responseTypes).toEqual([1])
+    expect(result.data.applicationType.value.accessTokenType).toBe(1)
+    expect(result.data.applicationType.value.accessTokenRoleAssertion).toBe(true)
+    expect(result.data.applicationType.value.idTokenUserinfoAssertion).toBe(false)
+    expect(result.data.applicationType.value.additionalOrigins).toEqual(["https://example.test"])
   })
 
   test("returns JSON and YAML using protobuf serialization", () => {
