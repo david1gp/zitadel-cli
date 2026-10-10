@@ -80,6 +80,7 @@ describe("legacy Management user-grant operations", () => {
         ],
       }),
       request: {
+        queries: [],
         query: { asc: true, limit: 100, offset: 0 },
       },
     })
