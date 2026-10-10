@@ -75,10 +75,7 @@ const userGrantListItemParse = (value: unknown): Result<UserGrant> => {
     return userGrantListError("user grant response contains a malformed result")
   }
   const rawRoleKeys = candidate.roleKeys === undefined ? [] : candidate.roleKeys
-  if (
-    !Array.isArray(rawRoleKeys) ||
-    rawRoleKeys.some((role) => typeof role !== "string" || role === "")
-  ) {
+  if (!Array.isArray(rawRoleKeys) || rawRoleKeys.some((role) => typeof role !== "string" || role === "")) {
     return userGrantListError("user grant response contains a malformed result")
   }
   const stateResult = userGrantStateParse(candidate.state)
