@@ -26,12 +26,13 @@ describe("ProjectService.ListProjects", () => {
     const envFile = join(directory, ".env.test")
 
     try {
+      const isolatedEnvironment = { HOME: directory, XDG_CONFIG_HOME: directory }
       await writeFile(
         envFile,
         ["ZITADEL_BASE_URL=https://from-file.example/", 'export ZITADEL_TOKEN="from-file"', ""].join("\n"),
       )
 
-      const fileResult = await zitadelConfigCreate({ env: {}, envFile })
+      const fileResult = await zitadelConfigCreate({ env: isolatedEnvironment, envFile })
       expect(fileResult).toEqual({
         success: true,
         data: {
@@ -42,6 +43,7 @@ describe("ProjectService.ListProjects", () => {
 
       const environmentResult = await zitadelConfigCreate({
         env: {
+          ...isolatedEnvironment,
           ZITADEL_BASE_URL: "https://from-environment.example/",
           ZITADEL_TOKEN: "from-environment",
         },
@@ -58,6 +60,7 @@ describe("ProjectService.ListProjects", () => {
       const flagResult = await zitadelConfigCreate({
         baseUrl: "https://from-flag.example/",
         env: {
+          ...isolatedEnvironment,
           ZITADEL_BASE_URL: "https://from-environment.example/",
           ZITADEL_TOKEN: "from-environment",
         },
