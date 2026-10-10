@@ -53,7 +53,7 @@
     "generate:proto": "buf generate --template buf.gen.yaml",
     "test": "bun test",
     "test:w": "bun test --watch",
-    "type-check": "tsc --noEmit",
+    "type-check": "bun check",
     "build": "rm -rf ./dist && tsc -p ./tsconfig.lib.json",
     "deploy": "bash ./ops/deploy.sh",
     "release": "bash ./ops/release.sh",
