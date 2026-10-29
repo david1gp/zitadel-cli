@@ -69,7 +69,7 @@
     "valibot": "^1.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.2",
+    "@biomejs/biome": "^2.6.4",
     "@bufbuild/buf": "1.69.0",
     "@bufbuild/protoc-gen-es": "2.14.0",
     "@connectrpc/protoc-gen-connect-es": "1.7.0",
